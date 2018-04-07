@@ -51,7 +51,13 @@ def projection(a, b):
 def energy(x, M):
     return np.sum(np.outer(x, x)*M)/2
 
-def seek(x, H2, ren=renormL2, beta = 0.001, cutoff=1e-6, maxIter = 100000, recordStep=100):
+def gradientDir(x, M, n = 1):
+    return np.matmul(M, x**n)
+
+def gradient(x, M, n=1):
+    return (x**(n-1))*gradientDir(x, M, n)
+
+def seek(x, H2, ren=renormL2, n=4, beta = 0.001, cutoff=1e-6, maxIter = 100000, recordStep=100):
     """The main loop. Assumes that the energy of x is 0"""
     M  = getM(H2)
     m  = getm(H2)
@@ -59,10 +65,11 @@ def seek(x, H2, ren=renormL2, beta = 0.001, cutoff=1e-6, maxIter = 100000, recor
 #    energies = []
     i = 0
     y = ren(x)
+#    print m.shape
     while i < maxIter:
         #### First, the deep math.
         # Gradient of energy.
-        g = np.matmul(M, y)
+        g = gradientDir(x, M, n)
         # Step direction
         step = m - projection(m, g)
         step = step - projection(step, y)
@@ -71,13 +78,14 @@ def seek(x, H2, ren=renormL2, beta = 0.001, cutoff=1e-6, maxIter = 100000, recor
         y = y + beta*step
         #  Renorm
 #        y = ReLu(y)
-        g2 = np.matmul(M, y)
+        g2 = gradientDir(y, M, 1)
         y = y - projection(y, g2) #Return to 0 energy
 #        y = ReLu(y)
         y = ren(y)
         #### Next the logistics; counters, etc.
         s = np.sum(ReLu(np.sign(np.round(y, 1))))
 #        energies.append(energy(y, M))
+#        print y.shape
         if recordStep != 0 and i % recordStep == 0:
             print y
             print r
