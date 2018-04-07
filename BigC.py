@@ -1,4 +1,4 @@
-from NP import *
+from NPLn import *
 from graphReader import getGraph
 from cliqueProject import extractClique
 from cliqueProject import verifyClique
