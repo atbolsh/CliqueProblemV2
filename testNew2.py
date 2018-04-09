@@ -1,4 +1,4 @@
-from regressLn import *
+from regressLn2 import *
 from graphReader import *
 from BigC import biggestClique
 from BigC import verifyClique
@@ -26,10 +26,10 @@ C = []
 for i in range(0, N10_4, 1):
    x = np.random.rand(N10_4)*0.001
    x[i] = 1
-   y, c2, errors2 = seek(x, H2, renormL2, 100,  1e-2, 1e-8, 100000000000000, 1000)
+   y, c2, errors2 = seek(x, H2, renormL2, 64,  1e-3, 1e-8, 100000000000000, 1000)
    Y.append(y)
    R = biggestClique(np.fabs(y), G)
-   f = open('Results_h10_4_L100', 'a')
+   f = open('Results_h10_4_L26_2', 'a')
    f.write('\n\n' + str(R) + '\n' + str(len(R)) + '\n\n')
    f.close()
    C.append(R)

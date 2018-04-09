@@ -69,7 +69,7 @@ def seek(x, H2, ren=renormL2, n=4, beta = 0.001, cutoff=1e-6, maxIter = 100000, 
     while i < maxIter:
         #### First, the deep math.
         # Gradient of energy.
-        g = np.matmul(M, (np.fabs(y)**n))
+        g = np.matmul(M, (renormCube(np.fabs(y))**n))
         # Step direction
         step = m - projection(m, g)
         step = step - projection(step, y)
@@ -78,7 +78,7 @@ def seek(x, H2, ren=renormL2, n=4, beta = 0.001, cutoff=1e-6, maxIter = 100000, 
         y = y + beta*step
         #  Renorm
 #        y = ReLu(y)
-        g2 = np.matmul(M, (np.fabs(y)**n))
+        g2 = np.matmul(M, (renormCube(np.fabs(y))**n))
         y = y - projection(y, g2) #Return to 0 energy
 #        y = ReLu(y)
         y = ren(y)
@@ -87,6 +87,7 @@ def seek(x, H2, ren=renormL2, n=4, beta = 0.001, cutoff=1e-6, maxIter = 100000, 
 #        energies.append(energy(y, M))
         if recordStep != 0 and i % recordStep == 0:
             print y
+            print np.sum(y)
             print r
             R = biggestClique(np.fabs(y), H2)
             print R
